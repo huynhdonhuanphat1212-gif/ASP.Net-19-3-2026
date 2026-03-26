@@ -2,17 +2,15 @@
 
 namespace demo.Models
 {
-    public class Student
+    public class Course
     {
         public int Id { get; set; }
 
         [Required]
-        public string StudentCode { get; set; } = string.Empty;
+        public string CourseCode { get; set; } = string.Empty;
 
         [Required]
-        public string FullName { get; set; } = string.Empty;
-
-        public DateTime Birthday { get; set; }
+        public string CourseName { get; set; } = string.Empty;
 
         public ICollection<Enrollment>? Enrollments { get; set; }
     }

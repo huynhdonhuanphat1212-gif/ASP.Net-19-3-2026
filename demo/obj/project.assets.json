@@ -8186,11 +8186,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\huynhdonhuanphat_2123110381\\demo\\demo.csproj",
+      "projectUniqueName": "D:\\ASp.net\\huynhdonhuanphat_2123110381\\demo\\demo.csproj",
       "projectName": "demo",
-      "projectPath": "D:\\huynhdonhuanphat_2123110381\\demo\\demo.csproj",
+      "projectPath": "D:\\ASp.net\\huynhdonhuanphat_2123110381\\demo\\demo.csproj",
       "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-      "outputPath": "D:\\huynhdonhuanphat_2123110381\\demo\\obj\\",
+      "outputPath": "D:\\ASp.net\\huynhdonhuanphat_2123110381\\demo\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

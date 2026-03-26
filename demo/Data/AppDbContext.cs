@@ -5,13 +5,13 @@ namespace demo.Data
 {
     public class AppDbContext : DbContext
     {
-        // Constructor bắt buộc
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
 
-        // Bảng Students
         public DbSet<Student> Students { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Enrollment> Enrollments { get; set; }
     }
 }
