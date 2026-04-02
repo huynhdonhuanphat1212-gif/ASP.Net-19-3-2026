@@ -7,88 +7,71 @@ namespace demo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentsController : ControllerBase
+    public class StudentController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public StudentsController(AppDbContext context)
+        public StudentController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Students
+        // GET: api/student
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
-            return await _context.Students.ToListAsync();
+            return await _context.Students
+                .Include(s => s.Class)
+                .Include(s => s.Enrollments)
+                .ToListAsync();
         }
 
-        // GET: api/Students/1
+        // GET: api/student/1
         [HttpGet("{id}")]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await _context.Students
+                .Include(s => s.Class)
+                .Include(s => s.Enrollments)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound();
-            }
 
             return student;
         }
 
-        // POST: api/Students
+        // POST: api/student
         [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        public async Task<ActionResult<Student>> CreateStudent(Student student)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
         }
 
-        // PUT: api/Students/1
+        // PUT: api/student/1
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(int id, Student student)
-
+        public async Task<IActionResult> UpdateStudent(int id, Student student)
         {
-
-          
             if (id != student.Id)
-            {
-                return BadRequest("ID không khớp");
-            }
+                return BadRequest();
 
-            var st = await _context.Students.FindAsync(id);
-            if (st == null)
-            {
-                return NotFound();
-            }
-
-            // Update fields
-            st.StudentCode = student.StudentCode;
-            st.FullName = student.FullName;
-            st.Birthday = student.Birthday;
-
+            _context.Entry(student).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return Ok(st);
+            return NoContent();
         }
 
-        // DELETE: api/Students/1
+        // DELETE: api/student/1
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
+
             if (student == null)
-            {
                 return NotFound();
-            }
 
             _context.Students.Remove(student);
             await _context.SaveChangesAsync();

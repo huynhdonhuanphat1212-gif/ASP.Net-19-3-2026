@@ -19,7 +19,10 @@ namespace demo.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Course>>> GetCourses()
         {
-            return await _context.Courses.ToListAsync();
+            return await _context.Courses
+                .Include(c => c.Teacher)
+                .Include(c => c.Enrollments)
+                .ToListAsync();
         }
 
         [HttpPost]
