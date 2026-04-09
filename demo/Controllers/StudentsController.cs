@@ -16,67 +16,149 @@ namespace demo.Controllers
             _context = context;
         }
 
-        // GET: api/student
+        /// <summary>
+        /// Lấy danh sách sinh viên
+        /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+        public async Task<IActionResult> GetStudents()
         {
-            return await _context.Students
-                .Include(s => s.Class)
-                .Include(s => s.Enrollments)
+            var data = await _context.Students
+                .Select(s => new
+                {
+                    s.Id,
+                    s.StudentCode,
+                    s.FullName,
+                    s.Birthday,
+                    s.ClassId
+                })
                 .ToListAsync();
+
+            return Ok(data);
         }
 
-        // GET: api/student/1
+        /// <summary>
+        /// Lấy chi tiết sinh viên theo ID
+        /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(int id)
-        {
-            var student = await _context.Students
-                .Include(s => s.Class)
-                .Include(s => s.Enrollments)
-                .FirstOrDefaultAsync(s => s.Id == id);
-
-            if (student == null)
-                return NotFound();
-
-            return student;
-        }
-
-        // POST: api/student
-        [HttpPost]
-        public async Task<ActionResult<Student>> CreateStudent(Student student)
-        {
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
-        }
-
-        // PUT: api/student/1
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStudent(int id, Student student)
-        {
-            if (id != student.Id)
-                return BadRequest();
-
-            _context.Entry(student).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // DELETE: api/student/1
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudent(int id)
+        public async Task<IActionResult> GetStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
 
             if (student == null)
-                return NotFound();
+                return NotFound("Không tìm thấy sinh viên");
+
+            return Ok(student);
+        }
+
+        /// <summary>
+        /// Thêm sinh viên mới
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> CreateStudent(Student student)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (student.Birthday > DateTime.Now)
+                return BadRequest("Ngày sinh không hợp lệ");
+
+            // Check trùng mã sinh viên
+            var exists = await _context.Students
+                .AnyAsync(s => s.StudentCode == student.StudentCode);
+
+            if (exists)
+                return BadRequest("Mã sinh viên đã tồn tại");
+
+            _context.Students.Add(student);
+            await _context.SaveChangesAsync();
+
+            return Ok(student);
+        }
+
+        /// <summary>
+        /// Cập nhật sinh viên
+        /// </summary>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStudent(int id, Student student)
+        {
+            if (id != student.Id)
+                return BadRequest("ID không khớp");
+
+            var existing = await _context.Students.FindAsync(id);
+
+            if (existing == null)
+                return NotFound("Không tìm thấy sinh viên");
+
+            existing.StudentCode = student.StudentCode;
+            existing.FullName = student.FullName;
+            existing.Birthday = student.Birthday;
+            existing.ClassId = student.ClassId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(existing);
+        }
+
+        /// <summary>
+        /// Xóa sinh viên
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStudent(int id)
+        {
+            var student = await _context.Students
+                .Include(s => s.Enrollments)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (student == null)
+                return NotFound("Không tìm thấy sinh viên");
+
+            // Check ràng buộc
+            if (student.Enrollments != null && student.Enrollments.Any())
+                return BadRequest("Không thể xóa sinh viên đã đăng ký môn học");
 
             _context.Students.Remove(student);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Đã xóa sinh viên");
+        }
+
+        /// <summary>
+        /// Tìm kiếm sinh viên theo tên
+        /// </summary>
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string? name)
+        {
+            var query = _context.Students.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(s => s.FullName.Contains(name));
+            }
+
+            var result = await query.ToListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Phân trang sinh viên
+        /// </summary>
+        [HttpGet("paging")]
+        public async Task<IActionResult> Paging(int page = 1, int pageSize = 5)
+        {
+            var total = await _context.Students.CountAsync();
+
+            var data = await _context.Students
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                page,
+                pageSize,
+                data
+            });
         }
     }
 }

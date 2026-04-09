@@ -1,15 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace demo.Models
+﻿using demo.Models;
+using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
+public class Department
 {
-    public class Department
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        [Required]
-        public string DepartmentName { get; set; }
+    [Required]
+    public string DepartmentName { get; set; }
 
-        public ICollection<Teacher>? Teachers { get; set; }
-        public ICollection<Class>? Classes { get; set; }
-    }
+    [JsonIgnore]
+    public ICollection<Teacher>? Teachers { get; set; }
+
+    [JsonIgnore]
+    public ICollection<Class>? Classes { get; set; }
 }

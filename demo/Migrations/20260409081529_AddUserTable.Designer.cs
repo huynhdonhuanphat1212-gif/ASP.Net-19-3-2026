@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using demo.Data;
 
@@ -11,9 +12,11 @@ using demo.Data;
 namespace demo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409081529_AddUserTable")]
+    partial class AddUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace demo.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Department", b =>
+            modelBuilder.Entity("Course", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,13 +33,21 @@ namespace demo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DepartmentName")
+                    b.Property<string>("CourseName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Credits")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("Student", b =>
@@ -139,7 +150,7 @@ namespace demo.Migrations
                     b.ToTable("Classrooms");
                 });
 
-            modelBuilder.Entity("demo.Models.Course", b =>
+            modelBuilder.Entity("demo.Models.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -147,21 +158,13 @@ namespace demo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CourseName")
+                    b.Property<string>("DepartmentName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Credits")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("Courses");
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("demo.Models.Enrollment", b =>
@@ -245,28 +248,15 @@ namespace demo.Migrations
                     b.ToTable("Teachers");
                 });
 
-            modelBuilder.Entity("demo.Models.User", b =>
+            modelBuilder.Entity("Course", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("demo.Models.Teacher", "Teacher")
+                        .WithMany("Courses")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Student", b =>
@@ -301,7 +291,7 @@ namespace demo.Migrations
 
             modelBuilder.Entity("demo.Models.Class", b =>
                 {
-                    b.HasOne("Department", "Department")
+                    b.HasOne("demo.Models.Department", "Department")
                         .WithMany("Classes")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -310,20 +300,9 @@ namespace demo.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("demo.Models.Course", b =>
-                {
-                    b.HasOne("demo.Models.Teacher", "Teacher")
-                        .WithMany("Courses")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Teacher");
-                });
-
             modelBuilder.Entity("demo.Models.Enrollment", b =>
                 {
-                    b.HasOne("demo.Models.Course", "Course")
+                    b.HasOne("Course", "Course")
                         .WithMany("Enrollments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -354,7 +333,7 @@ namespace demo.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("demo.Models.Course", "Course")
+                    b.HasOne("Course", "Course")
                         .WithMany("Schedules")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -369,7 +348,7 @@ namespace demo.Migrations
 
             modelBuilder.Entity("demo.Models.Teacher", b =>
                 {
-                    b.HasOne("Department", "Department")
+                    b.HasOne("demo.Models.Department", "Department")
                         .WithMany("Teachers")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -378,11 +357,11 @@ namespace demo.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("Department", b =>
+            modelBuilder.Entity("Course", b =>
                 {
-                    b.Navigation("Classes");
+                    b.Navigation("Enrollments");
 
-                    b.Navigation("Teachers");
+                    b.Navigation("Schedules");
                 });
 
             modelBuilder.Entity("Student", b =>
@@ -404,11 +383,11 @@ namespace demo.Migrations
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("demo.Models.Course", b =>
+            modelBuilder.Entity("demo.Models.Department", b =>
                 {
-                    b.Navigation("Enrollments");
+                    b.Navigation("Classes");
 
-                    b.Navigation("Schedules");
+                    b.Navigation("Teachers");
                 });
 
             modelBuilder.Entity("demo.Models.Schedule", b =>

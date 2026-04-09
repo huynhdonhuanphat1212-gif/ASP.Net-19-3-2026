@@ -518,10 +518,11 @@ D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\staticwebassets\msb
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.demo.props
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.demo.props
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\staticwebassets.pack.json
-D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\demo.csproj.Up2Date
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\demo.dll
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\refint\demo.dll
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\demo.pdb
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\demo.genruntimeconfig.cache
 D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\ref\demo.dll
+D:\ASp.net\huynhdonhuanphat_2123110381\demo\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\ASp.net\huynhdonhuanphat_2123110381\demo\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

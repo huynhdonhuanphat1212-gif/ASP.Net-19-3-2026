@@ -17,10 +17,12 @@ namespace demo.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
 
-        // 👉 Thêm mới
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
+
+        // 👉 THÊM USER
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,35 +68,35 @@ namespace demo.Data
                 .HasForeignKey(e => e.CourseId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // 👉 Schedule - Class
+            // Schedule - Class
             modelBuilder.Entity<Schedule>()
                 .HasOne(s => s.Class)
                 .WithMany(c => c.Schedules)
                 .HasForeignKey(s => s.ClassId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // 👉 Schedule - Classroom
+            // Schedule - Classroom
             modelBuilder.Entity<Schedule>()
                 .HasOne(s => s.Classroom)
                 .WithMany(r => r.Schedules)
                 .HasForeignKey(s => s.ClassroomId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // 👉 Schedule - Course
+            // Schedule - Course
             modelBuilder.Entity<Schedule>()
                 .HasOne(s => s.Course)
                 .WithMany(c => c.Schedules)
                 .HasForeignKey(s => s.CourseId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // 👉 Attendance - Student
+            // Attendance - Student
             modelBuilder.Entity<Attendance>()
                 .HasOne(a => a.Student)
                 .WithMany(s => s.Attendances)
                 .HasForeignKey(a => a.StudentId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // 👉 Attendance - Schedule
+            // Attendance - Schedule
             modelBuilder.Entity<Attendance>()
                 .HasOne(a => a.Schedule)
                 .WithMany(s => s.Attendances)

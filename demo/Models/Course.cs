@@ -1,20 +1,24 @@
-﻿using demo.Models;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-public class Course
+namespace demo.Models
 {
-    public int Id { get; set; }
+    public class Course
+    {
+        public int Id { get; set; }
 
-    public int TeacherId { get; set; }
-    public Teacher? Teacher { get; set; }
+        public int TeacherId { get; set; }
+        public Teacher? Teacher { get; set; }
 
-    public string CourseName { get; set; }
-    public int Credits { get; set; }
+        [Required]
+        public string CourseName { get; set; }
 
-    [JsonIgnore]
-    public ICollection<Enrollment>? Enrollments { get; set; }
+        public int Credits { get; set; }
 
-    // 👉 THÊM DÒNG NÀY
-    [JsonIgnore]
-    public ICollection<Schedule>? Schedules { get; set; }
+        [JsonIgnore]
+        public ICollection<Enrollment>? Enrollments { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Schedule>? Schedules { get; set; }
+    }
 }

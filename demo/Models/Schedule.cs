@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace demo.Models
 {
@@ -12,11 +13,13 @@ namespace demo.Models
         public int ClassroomId { get; set; }
         public Classroom? Classroom { get; set; }
 
-        // 👉 BẮT BUỘC PHẢI CÓ
         public int ClassId { get; set; }
         public Class? Class { get; set; }
 
+        [Required]
         public string DayOfWeek { get; set; }
+
+        [Required]
         public string TimeSlot { get; set; }
 
         [JsonIgnore]
