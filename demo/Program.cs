@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using demo.Data;
 using System.Text.Json.Serialization;
-
-// 👉 THÊM JWT
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -15,6 +13,16 @@ var key = "THIS_IS_SECRET_KEY_123456";
 // 👉 Kết nối SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 👉 Cấu hình CORS (Phải đặt tên nhất quán)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact", // Đặt tên là "AllowReact"
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 
 // 👉 JWT AUTH
 builder.Services.AddAuthentication(options =>
@@ -36,7 +44,6 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// 👉 Controllers + fix JSON loop
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -48,7 +55,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Middleware
+// --- THỨ TỰ MIDDLEWARE RẤT QUAN TRỌNG ---
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -57,8 +65,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// 👉 QUAN TRỌNG
-app.UseAuthentication(); // phải có
+// 1. Kích hoạt CORS trước (Phải dùng đúng tên "AllowReact" đã khai báo ở trên)
+app.UseCors("AllowReact");
+
+// 2. Sau đó mới đến Auth
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
